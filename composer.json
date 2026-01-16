@@ -1,0 +1,17 @@
+{
+    "name": "albertocosta/test-git",
+    "autoload": {
+        "psr-4": {
+            "Albertocosta\\TestGit\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alberto Costa",
+            "email": "73739928+acostaRossi@users.noreply.github.com"
+        }
+    ],
+    "require-dev": {
+        "deployer/deployer": "^7.5"
+    }
+}
