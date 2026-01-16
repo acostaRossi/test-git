@@ -14,6 +14,26 @@ set('deploy_path', '/Users/albertocosta/Dev/Scuola/202526/altro/lamp-docker/test
 localhost()
     ->setLabels(['stage' => 'local']);
 
+// ... configurazione host ...
+
+task('deploy:check_changes', function () {
+    // 1. Ottieni l'ultimo commit deployato sul server
+    // (Deployer salva l'hash nel file REVISION all'interno della cartella current)
+    $lastDeployed = run('cat {{current_path}}/REVISION 2>/dev/null || echo "none"');
+
+    // 2. Ottieni l'ultimo commit locale (o dal repo remoto)
+    $currentCommit = runLocally('git rev-parse HEAD');
+
+    if ($lastDeployed === $currentCommit) {
+        writeln("<info>Nessun nuovo cambiamento rilevato. Deploy annullato.</info>");
+        // Interrompe l'esecuzione di Deployer in modo pulito
+        throw new \Deployer\Exception\GracefulShutdownException("Già aggiornato.");
+    }
+});
+
+// Esegui il controllo come primissima cosa
+before('deploy:prepare', 'deploy:check_changes');
+
 // Definizione del flusso di deploy
 task('deploy', [
     'deploy:prepare',
